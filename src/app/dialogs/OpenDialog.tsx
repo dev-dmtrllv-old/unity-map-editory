@@ -1,5 +1,5 @@
 import { Editor } from "app/editor/Editor";
-import { DialogStore } from "app/stores/DialogStore";
+import { DialogStore, InferIDialogStoreArgs } from "app/stores/DialogStore";
 import { OpenDialogStore } from "app/stores/OpenDialogStore";
 import { RootStore } from "app/stores/RootStore";
 import { useStore, useStores } from "app/stores/Store";
@@ -11,13 +11,13 @@ import { utils } from "utils";
 
 import "./styles/open-dialog.scss";
 
-export const showOpenDialog = () => RootStore.get(DialogStore).open(OpenDialog,
+export const showOpenDialog = (args: InferIDialogStoreArgs<OpenDialogStore>) => RootStore.get(DialogStore).open(OpenDialog,
 	"Open Map", {
 	max: {
 		width: "920px",
 		height: "720px"
 	}
-}, { closable: Editor.get().openMapNames.length > 0 });
+}, { closable: Editor.get().openMapNames.length > 0 }, OpenDialogStore, args);
 
 const NoProjectFound = useStore(OpenDialogStore, ({ store }) => (
 	<View className="not-found">

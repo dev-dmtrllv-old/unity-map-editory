@@ -6,7 +6,7 @@ import path from "path";
 import { SerializableStore } from "./SerializableStore";
 import { SerializedType } from "app/Serializable";
 import { RootStore } from "./RootStore";
-import { DialogStore } from "./DialogStore";
+import { DialogStore, IDialogStore } from "./DialogStore";
 import { Editor } from "app/editor/Editor";
 import { Map } from "app/editor/Map";
 
@@ -16,8 +16,22 @@ const defaultInputValues: Required<CreateMapInputs> = {
 	height: "480",
 };
 
-export class OpenDialogStore extends SerializableStore<SerializableData>
+export class OpenDialogStore extends SerializableStore<SerializableData> implements IDialogStore<OpenArgs>
 {
+	@action
+	public onShow = (args: OpenArgs): void =>
+	{
+		this.showCreateMapPanel(args.createMap || false);
+		this._selected = args.selectedProject ? (this.projects.indexOf(args.selectedProject) || 0) : 0;
+	}
+
+	@action
+	public onClose = (): void =>
+	{
+		this.showCreateMapPanel(false);
+		this.resetInputValues();
+	}
+
 	protected get defaultData(): SerializableData
 	{
 		return {
@@ -253,10 +267,11 @@ export class OpenDialogStore extends SerializableStore<SerializableData>
 	@action
 	public openMap = (map: Map) =>
 	{
-		if(this._selectedDropdown === -1)
+		if (this._selectedDropdown === -1)
 		{
 			this.resetInputValues();
 			Editor.get().addToOpenMaps(map);
+			this.showCreateMapPanel(false);
 			RootStore.get(DialogStore).close(true);
 		}
 	}
@@ -301,4 +316,9 @@ type CreateMapInputs = {
 
 type SerializableData = {
 	recentProjects: UnityProject[];
+};
+
+type OpenArgs = {
+	selectedProject?: UnityProject;
+	createMap?: boolean;
 };

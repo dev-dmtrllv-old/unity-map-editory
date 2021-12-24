@@ -1,15 +1,13 @@
 import { MenuItem, MENU_SEPERATOR } from "./stores/MenuBarStore";
 import { ipcRenderer } from "electron";
 import { Editor } from "./editor/Editor";
-import { RootStore } from "./stores/RootStore";
-import { DialogStore } from "./stores/DialogStore";
-import { OpenDialog, showOpenDialog } from "./dialogs/OpenDialog";
+import { showOpenDialog } from "./dialogs/OpenDialog";
 
 export const MENU_ITEMS = [
 	new MenuItem("File", [
-		new MenuItem("New Map", () => console.log("New Map!"), []),
+		new MenuItem("New Map", () => showOpenDialog({ createMap: true, selectedProject: Editor.get().activeMap?.project })),
 		MENU_SEPERATOR,
-		new MenuItem("Open Map", showOpenDialog),
+		new MenuItem("Open Map", () => showOpenDialog({ createMap: false, selectedProject: Editor.get().activeMap?.project })),
 		new MenuItem("Open Recent Map", [
 			new MenuItem("Test 123"),
 			new MenuItem("Test 123"),

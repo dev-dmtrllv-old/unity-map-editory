@@ -34,7 +34,10 @@ export class Editor
 				e.preventDefault();
 				e.stopPropagation();
 				if (this._openMaps.length <= 0)
-					showOpenDialog();
+				{
+					console.log("onClose")
+					showOpenDialog({ createMap: false });
+				}
 			}
 		}
 	});

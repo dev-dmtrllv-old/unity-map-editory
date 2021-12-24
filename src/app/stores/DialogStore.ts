@@ -1,5 +1,6 @@
 import { action, computed, observable } from "mobx";
 import React from "react";
+import { RootStore } from "./RootStore";
 import { InitializableStore } from "./Store";
 
 export class DialogStore extends InitializableStore<InitDialogProps>
@@ -23,6 +24,8 @@ export class DialogStore extends InitializableStore<InitDialogProps>
 
 	public static mergeSize(size: Partial<PanelSize>): Required<PanelSize> { return { ...this.defaultSize, ...size }; }
 	public static mergeOptions(options: DialogOptions): Required<DialogOptions> { return { ...this.defaultOptions, ...options }; }
+
+	private _dialogStore: IDialogStore<any> | null = null;
 
 	@observable
 	private _isOpen: boolean = false;
@@ -67,7 +70,6 @@ export class DialogStore extends InitializableStore<InitDialogProps>
 		};
 	}
 
-
 	protected init = (props: InitDialogProps) =>
 	{
 		this._isOpen = props.open;
@@ -75,8 +77,9 @@ export class DialogStore extends InitializableStore<InitDialogProps>
 			this.open(props.component, props.title, props.size, props.options);
 	}
 
-	@action
-	public readonly open = (component: React.FC, title: string, size?: Partial<PanelSize>, options?: DialogOptions) =>
+	public open (component: React.FC, title: string, size: Optional<Partial<PanelSize>>, options: Optional<DialogOptions>): void;
+	public open<T extends IDialogStore<any>>(component: React.FC, title: string, size: Optional<Partial<PanelSize>>, options: Optional<DialogOptions>, store: DialogStoreType<T>, args: InferIDialogStoreArgs<T>): void;
+	public open<T extends IDialogStore<any>>(component: React.FC, title: string, size: Optional<Partial<PanelSize>>, options: Optional<DialogOptions>, store?: DialogStoreType<T>, args?: InferIDialogStoreArgs<T>)
 	{
 		this._isOpen = true;
 		this._component = component;
@@ -85,6 +88,11 @@ export class DialogStore extends InitializableStore<InitDialogProps>
 			this._size = DialogStore.mergeSize(size);
 		if (options)
 			this._options = DialogStore.mergeOptions(options);
+		
+		this._dialogStore = store ? RootStore.get(store) : null;
+
+		if(this._dialogStore)
+			this._dialogStore.onShow(args);
 	}
 
 	public readonly close = (force: boolean = false) =>
@@ -137,3 +145,13 @@ type PanelSize = Size & {
 	min?: Size;
 	max?: Size;
 };
+
+export interface IDialogStore<Args extends {} = {}>
+{
+	onShow(args: Args): void;
+	onClose(): void;
+}
+
+export type InferIDialogStoreArgs<T> = T extends IDialogStore<infer Args> ? Args : never;
+
+export type DialogStoreType<T extends IDialogStore<any>> = new (...args: any) => T;

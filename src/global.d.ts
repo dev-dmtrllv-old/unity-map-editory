@@ -12,3 +12,5 @@ declare module "*.webp" {
 	const data: string;
 	export default data;
 }
+
+type Optional<T> = T | undefined | null | false;

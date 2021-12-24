@@ -1,7 +1,6 @@
-import { Editor } from "app/editor/Editor";
 import { RootStore } from "app/stores/RootStore";
 import { SidebarStore } from "app/stores/SidebarStore";
-import { FlexBox, FlexItem, View } from "app/views";
+import { FlexItem, View } from "app/views";
 import React from "react";
 import { utils } from "utils";
 import { PanelSlider } from "./PanelSlider";
@@ -25,7 +24,7 @@ const LayersPanel = RootStore.use(SidebarStore, ({ store }) =>
 			{map && map.layers.map((l ,i) => 
 			{
 				return (
-					<View>
+					<View key={i}>
 						Layer {i}
 					</View>
 				)
@@ -34,19 +33,9 @@ const LayersPanel = RootStore.use(SidebarStore, ({ store }) =>
 	);
 });
 
-const HierarchyPanel = RootStore.use(SidebarStore, ({ store }) =>
-{
-	return (
-		<View>
-
-		</View>
-	);
-});
-
 const SIDEBAR_PANELS: { [key: string]: React.FC } = {
 	properties: PropertiesPanel,
-	layers: LayersPanel,
-	hierarchy: HierarchyPanel
+	layers: LayersPanel
 };
 
 export const Panel: React.FC<{ index: number, name: string, isCollapsed: boolean }> = RootStore.use(SidebarStore, ({ store, index, isCollapsed, name }) =>
