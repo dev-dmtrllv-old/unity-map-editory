@@ -6,6 +6,7 @@ import { DefaultShader } from "./shaders/DefaultShader";
 import { Vector2 } from "./Vector2";
 import { CanvasRenderer } from "./CanvasRenderer";
 import { action, observable } from "mobx";
+import { MapTexture } from "./MapTexture";
 
 export class MapRenderer
 {
@@ -18,10 +19,10 @@ export class MapRenderer
 	@observable
 	private _zoom: number = 1;
 
-	public get zoom () { return this._zoom; }
+	public get zoom() { return this._zoom; }
 
 	@action
-	public setZoom (zoom: number) { return this._zoom = zoom; }
+	public setZoom(zoom: number) { return this._zoom = zoom; }
 
 	public get buffer()
 	{
@@ -82,6 +83,22 @@ export class MapRenderer
 				gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 			});
 		});
+
+		if (this.map.selectedObject instanceof MapTexture)
+		{
+			const { texture, glTexture, position } = this.map.selectedObject;
+			
+			this.shader.setAttributeBuffer("aVertexPosition", texture.selectionBuffer);
+			this.shader.setAttributeBuffer("aUVPosition", texture.uvBuffer);
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, glTexture);
+			gl.uniform1i(this.shader.getUniformLocation("uSampler"), 0);
+			gl.uniform2fv(this.shader.getUniformLocation("uPosition"), [position.x, position.y]);
+			gl.uniform1f(this.shader.getUniformLocation("uSelectionRender"), 1);
+			gl.drawArrays(gl.LINE_LOOP, 0, 4);
+			gl.uniform1f(this.shader.getUniformLocation("uSelectionRender"), 0);
+			gl.uniform4fv(this.shader.getUniformLocation("uSelectionColor"), [1.0, 0.2, 0.2, 1]);
+		}
 
 		gl.disable(gl.BLEND);
 	}

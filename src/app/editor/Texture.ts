@@ -25,10 +25,15 @@ export class Texture
 	public readonly canvas: HTMLCanvasElement = document.createElement("canvas");
 
 	private _sizeBuffer: GLBuffer | null = null;
+	private _selectionBuffer: GLBuffer | null = null;
+	private _uvBuffer: GLBuffer | null = null;
 
 	public get sizeBuffer() { return this._sizeBuffer || GLBuffer.defaultBuffer; }
+	public get selectionBuffer() { return this._selectionBuffer || GLBuffer.defaultBuffer; }
 
-	private _uvBuffer: GLBuffer | null = null;
+	private _extent: Vector2 = Vector2.zero;
+
+	public get extent() { return this._extent; }
 
 	public get uvBuffer() { return this._uvBuffer || GLBuffer.defaultUVBuffer; }
 
@@ -176,11 +181,21 @@ export class Texture
 					const w = (this._spriteInfo ? this._spriteInfo.width : this._img.width) / 2;
 					const h = (this._spriteInfo ? this._spriteInfo.height : this._img.height) / 2;
 
+					this._extent.setX(w);
+					this._extent.setY(h);
+
 					this._sizeBuffer = new GLBuffer(gl, [
 						new Vector2(w, h),
 						new Vector2(-w, h),
 						new Vector2(w, -h),
 						new Vector2(-w, -h),
+					]);
+
+					this._selectionBuffer = new GLBuffer(gl, [
+						new Vector2(w, h),
+						new Vector2(w, -h),
+						new Vector2(-w, -h),
+						new Vector2(-w, h),
 					]);
 
 					this._uvBuffer = GLBuffer.defaultUVBuffer;

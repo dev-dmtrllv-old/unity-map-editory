@@ -42,25 +42,28 @@ export class Editor
 		}
 	});
 
+	
 	private static _instance = new Editor();
-
+	
 	public static get() { return this._instance; };
-
+	
 	@observable
 	private _openMaps: Map[] = [];
-
+	
 	@observable
 	private _activeMap: Map | null = null;
-
+	
 	@observable
 	private _selectedTextureIndex: number = -1;
-
+	
 	private _mouseDownPos: Vector2 | null = null;
 	private _startPos: Vector2 = Vector2.zero;
-	private _mapStartOffset: Vector2 = Vector2.zero;
+	private _startOffset: Vector2 = Vector2.zero;
 	private _zoomSensitivity: number = 8;
 	private _mouseDownButton: -1 | 0 | 1 | 2 = -1;
-
+	private _didMouseMoveOnClick: boolean = false;
+	private _mouseClickCleanTimeout: NodeJS.Timeout | null = null;
+	
 	@computed
 	public get projectTextures(): Texture[] { return this.activeMap?.project.textures || []; }
 
@@ -144,13 +147,48 @@ export class Editor
 		}
 	}
 
+	public readonly onClick = (e: React.MouseEvent<HTMLCanvasElement>) =>
+	{
+		if (this._didMouseMoveOnClick)
+		{
+			this._didMouseMoveOnClick = false;
+			return
+		}
+
+		const map = this._activeMap;
+
+		if (map && (e.button === 0))
+		{
+			const pos = this.mouseToMap(e);
+			map.selectObject(pos);
+		}
+
+		this._mouseDownPos = null;
+		this._mouseDownButton = -1;
+		this._startOffset = Vector2.zero;
+		this._startPos = Vector2.zero;
+		this.render();
+	}
+
 	public readonly onMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => 
 	{
-		if (this._activeMap)
+		this._didMouseMoveOnClick = false;
+		
+		if(this._mouseClickCleanTimeout)
+			clearTimeout(this._mouseClickCleanTimeout);
+		
+		const map = this._activeMap;
+		if (map)
 		{
-			this._mouseDownPos = this.mouseToMap(e);
+			const pos = this.mouseToMap(e);
+
+			this._mouseDownPos = Vector2.clone(pos);
 			this._mouseDownButton = e.button as any;
-			this._mapStartOffset = this._activeMap.offset;
+			this._startPos = Vector2.clone(pos);
+			if (e.button === 0 && map.selectedObject)
+				this._startOffset = Vector2.sub(map.selectedObject.position, pos);
+			else if (e.button === 1)
+				this._startOffset = map.offset;
 		}
 	}
 
@@ -163,6 +201,7 @@ export class Editor
 		{
 			this._mouseDownPos = Vector2.clone(pos);
 			this._startPos = Vector2.clone(pos);
+			this._mouseDownButton = 0;
 			map.setSelectedObject(map.activeLayer.addTexture(map.project.textures[this._selectedTextureIndex], pos));
 			this.selectTexture(-1);
 			this.render();
@@ -171,7 +210,6 @@ export class Editor
 
 	public readonly onMouseMove = (e: MouseEvent) => 
 	{
-
 		if (this._activeMap)
 		{
 			const map = this._activeMap;
@@ -179,7 +217,16 @@ export class Editor
 
 			if (this._mouseDownPos)
 			{
-				if (map.selectedObject && (map.selectedObject instanceof MapTexture))
+				if (!this._didMouseMoveOnClick)
+				{
+					const x1 = this._mouseDownPos.x - 2;
+					const x2 = this._mouseDownPos.x + 2;
+					const y1 = this._mouseDownPos.y - 2;
+					const y2 = this._mouseDownPos.y + 2;
+					if (pos.x < x1 || pos.x > x2 || pos.y < y1 || pos.y > y2)
+						this._didMouseMoveOnClick = true;
+				}
+				if ((this._mouseDownButton === 0) && map.selectedObject && (map.selectedObject instanceof MapTexture))
 				{
 					const offset = new Vector2(pos.x - this._mouseDownPos.x, pos.y - this._mouseDownPos.y);
 					const { width, height } = map.selectedObject.texture.canvas;
@@ -187,19 +234,18 @@ export class Editor
 
 					let p = Vector2.round(Vector2.add(this._startPos, offset));
 
-					let n = Vector2.add(p, Vector2.mul(map.offset, new Vector2(-1, -1)));
-					
+					let n = Vector2.add(this._startOffset, Vector2.add(p, Vector2.mul(map.offset, new Vector2(-1, -1))));
+
 					if (!Number.isInteger(e.x))
 						n.setX(n.x + 0.5);
 					if (!Number.isInteger(e.y))
 						n.setY(n.y + 0.5);
 
-						map.selectedObject.setPosition(n);
-					// this._selectedObject.setPosition(n);
+					map.selectedObject.setPosition(n);
 				}
 				else if (this._mouseDownButton === 1)
 				{
-					map.offset = Vector2.add(this._mapStartOffset, Vector2.sub(pos, this._mouseDownPos));
+					map.offset = Vector2.add(this._startOffset, Vector2.sub(pos, this._mouseDownPos));
 				}
 			}
 
@@ -213,18 +259,27 @@ export class Editor
 		this._mouseDownPos = null;
 		this._mouseDownButton = -1;
 		this.selectTexture(-1);
-		this._activeMap?.setSelectedObject(null);
+		this._startPos = Vector2.zero;
+
+		if(this._mouseClickCleanTimeout)
+			clearTimeout(this._mouseClickCleanTimeout);
+		this._mouseClickCleanTimeout = setTimeout(() => 
+		{
+			this._didMouseMoveOnClick = false;
+		}, 120);
 	}
 
 	public readonly onMouseWheel = (e: WheelEvent) => 
 	{
+		if(this._mouseDownPos)
+			return;
+
 		const pos = this.mouseToMap(e);
 		const map = this._activeMap;
-		if(map)
+		if (map)
 		{
 			const z = map.renderer.zoom;
 			const d = (this._zoomSensitivity * -z * Math.sign(e.deltaY)) / 100;
-			// console.log(z + d);
 			map.renderer.setZoom(utils.math.clamp(z + d, Editor.minZoom / 100, Editor.maxZoom / 100));
 
 			this.render();
@@ -248,7 +303,7 @@ export class Editor
 		const c = this.canvasRenderer.canvas!;
 		let { x, y } = c.getBoundingClientRect();
 
-		x = ((e.clientX - x  - (c.width / 2)) / z);
+		x = ((e.clientX - x - (c.width / 2)) / z);
 		y = (((e.clientY - y - (c.height / 2)) * -1) / z);
 
 		return new Vector2(x, y);

@@ -2,25 +2,40 @@ import { Serializable, SerializedType } from "app/Serializable";
 import { action, computed, makeAutoObservable, observable } from "mobx";
 import { Editor } from "./Editor";
 import { MapRenderer } from "./MapRenderer";
-import { Platform } from "./Platform";
 import { UnityProject } from "./UnityProject";
 import { Vector2 } from "./Vector2";
 import fs from "fs";
-import { Texture } from "./Texture";
 import { Layer } from "./Layer";
 import { GameObject } from "./GameObject";
 
 export class Map implements Serializable<SerializedMapData>
 {
+	public readonly selectObject = (position: Vector2): GameObject | null =>
+	{
+		const selected = this.activeLayer.textures.find(t => 
+		{
+			const { x, y } = t.position;
+			const { extent } = t.texture;
+			
+			const x1 = x - extent.x;
+			const x2 = x + extent.x;
+			const y1 = y - extent.y;
+			const y2 = y + extent.y;
+
+			return position.x >= x1 && position.x <= x2 && position.y >= y1 && position.y <= y2;
+		}) || null;
+
+		this.setSelectedObject(selected);
+
+		return selected;
+	}
+
 	private _name: string;
 	private _offset: Vector2 = Vector2.zero;
 	public get name() { return this._name; }
 
 	private _path: string;
 	public get path() { return this._path; }
-
-	private _isDirty: boolean = false;
-	public get isDirty() { return this._isDirty; }
 
 	public readonly renderer: MapRenderer;
 	public readonly project: UnityProject;
@@ -31,7 +46,6 @@ export class Map implements Serializable<SerializedMapData>
 	{
 		if (!Vector2.equals(this._offset, offset))
 		{
-			this._isDirty = true;
 			this._offset = offset;
 		}
 	}

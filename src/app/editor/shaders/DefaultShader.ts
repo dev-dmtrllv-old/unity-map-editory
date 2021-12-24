@@ -14,6 +14,7 @@ export class DefaultShader extends Shader<A, U>
 			uniform vec2 uPosition;
 			uniform vec4 uColor;
 			uniform vec2 uMapOffset;
+			uniform float uSelectionRender;
 			
 			uniform float uZoom;
 			uniform float uPixelRatio;
@@ -41,13 +42,21 @@ export class DefaultShader extends Shader<A, U>
 			
 			uniform sampler2D uSampler;
 			uniform float uRenderTexture;
+			uniform float uSelectionRender;
+			uniform vec4 uSelectionColor;
 
 			varying vec4 color;
 			varying vec2 uvCoord;
 
 			void main() {
-				if(uRenderTexture == 0.0)
+				if(uSelectionRender == 1.0)
+				{
+					gl_FragColor = uSelectionColor;
+				}
+				else if(uRenderTexture == 0.0)
+				{
 					gl_FragColor = color;
+				}
 				else
 				{
 					vec4 c = texture2D(uSampler, uvCoord);
@@ -76,4 +85,6 @@ type U = {
 	uZoom: "float";
 	uPixelRatio: "float";
 	uMapOffset: "vec2";
+	uSelectionRender: "float";
+	uSelectionColor: "vec4";
 };

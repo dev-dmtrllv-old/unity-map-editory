@@ -32,7 +32,7 @@ export const WorkArea = observer(({ }) =>
 				</FlexItem>
 				<FlexItem>
 					<View position="absolute" fill>
-						<canvas ref={editor.canvasRenderer.canvasRef} onMouseDown={editor.onMouseDown} onMouseEnter={editor.onMouseEnter}/>
+						<canvas ref={editor.canvasRenderer.canvasRef} onMouseDown={editor.onMouseDown} onMouseEnter={editor.onMouseEnter} onClick={editor.onClick}/>
 					</View>
 				</FlexItem>
 			</FlexBox>

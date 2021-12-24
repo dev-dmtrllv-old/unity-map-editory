@@ -24,16 +24,22 @@ export abstract class Shader<A extends Attributes, U extends Uniforms>
 		return 0;
 	}
 
-	private static readonly shaders: Shader<any, any>[] = [];
+	private static readonly shaders: {
+		[key: string]: Shader<any, any>;
+	} = {};
 
 	public static get<T extends Shader<any, any>>(type: ShaderType<T>): T
 	{
-		let s = this.shaders.find(s => s.constructor === type);
+		const name = type.name;
+
+		let s = this.shaders[name];
+		
 		if (!s)
 		{
 			s = new type(Editor.get().canvasRenderer.gl);
-			this.shaders.push(s);
+			this.shaders[name] = s;
 		}
+
 		return s as T;
 	}
 
