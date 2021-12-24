@@ -1,1 +1,2 @@
-# MOMO - Minecraft Server Manager
+# A map editor made for a pixel art game
+
