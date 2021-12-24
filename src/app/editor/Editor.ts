@@ -6,8 +6,8 @@ import { Map } from "./Map"
 import { showOpenDialog } from "app/dialogs/OpenDialog";
 import { Vector2 } from "./Vector2";
 import { Texture } from "./Texture";
-import { MapTexture } from "./MapTexture";
 import { utils } from "utils";
+import { GameObject } from "./GameObject";
 
 export class Editor
 {
@@ -225,11 +225,11 @@ export class Editor
 					if (pos.x < x1 || pos.x > x2 || pos.y < y1 || pos.y > y2)
 						this._didMouseMoveOnClick = true;
 				}
-				if ((this._mouseDownButton === 0) && map.selectedObject && (map.selectedObject instanceof MapTexture))
+				if ((this._mouseDownButton === 0) && map.selectedObject && (map.selectedObject instanceof GameObject))
 				{
 					const offset = new Vector2(pos.x - this._mouseDownPos.x, pos.y - this._mouseDownPos.y);
-					const { width, height } = map.selectedObject.texture.canvas;
-					const e = new Vector2(width / 2, height / 2);
+					const { x, y } = map.selectedObject.size;
+					const e = new Vector2(x / 2, y / 2);
 
 					let p = Vector2.round(Vector2.add(this._startPos, offset));
 

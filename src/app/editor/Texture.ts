@@ -1,5 +1,5 @@
 import fs from "fs";
-import path, { basename } from "path";
+import { basename } from "path";
 import { GLBuffer } from "./GLBuffer";
 import { Vector2 } from "./Vector2";
 
@@ -17,40 +17,32 @@ export class Texture
 		}
 		return t;
 	}
-
+	
 	public readonly path: string;
+	public readonly canvas: HTMLCanvasElement = document.createElement("canvas");
 
 	private readonly _img: HTMLImageElement = document.createElement("img");
 
-	public readonly canvas: HTMLCanvasElement = document.createElement("canvas");
-
+	private _name: string = "";
+	private _glTexture: WebGLTexture | null = null;
 	private _sizeBuffer: GLBuffer | null = null;
 	private _selectionBuffer: GLBuffer | null = null;
 	private _uvBuffer: GLBuffer | null = null;
-
-	public get sizeBuffer() { return this._sizeBuffer || GLBuffer.defaultBuffer; }
-	public get selectionBuffer() { return this._selectionBuffer || GLBuffer.defaultBuffer; }
-
 	private _extent: Vector2 = Vector2.zero;
-
-	public get extent() { return this._extent; }
-
-	public get uvBuffer() { return this._uvBuffer || GLBuffer.defaultUVBuffer; }
-
-	private _name: string = "";
-
-	public get name() { return this._name; }
-
-	private _base64: string = "";
-
-	public get base64() { return this._base64; }
-
-	public get dataString() { return this.base64.length > 0 ? this.base64 : this.path; }
-
 	private _isLoaded: boolean = false;
 	private _spriteInfo: SpriteInfo | null = null;
 
+	public get sizeBuffer() { return this._sizeBuffer || GLBuffer.defaultBuffer; }
+	public get selectionBuffer() { return this._selectionBuffer || GLBuffer.defaultBuffer; }
+	public get extent() { return this._extent; }
+	public get uvBuffer() { return this._uvBuffer || GLBuffer.defaultUVBuffer; }
+
+	public get name() { return this._name; }
+	private _base64: string = "";
+	public get base64() { return this._base64; }
+	public get dataString() { return this.base64.length > 0 ? this.base64 : this.path; }
 	public get isLoaded() { return this._isLoaded; }
+	public get glTexture() { return this._glTexture; }
 
 	private readonly metaInfo: string[];
 
@@ -177,6 +169,21 @@ export class Texture
 				{
 					this._isLoaded = true;
 					this._base64 = this.getImageData();
+
+					const t = gl.createTexture();
+
+					if (!t)
+						throw new Error();
+
+					gl.bindTexture(gl.TEXTURE_2D, t);
+					gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.canvas);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+					gl.bindTexture(gl.TEXTURE_2D, null);
+
+					this._glTexture = t;
 
 					const w = (this._spriteInfo ? this._spriteInfo.width : this._img.width) / 2;
 					const h = (this._spriteInfo ? this._spriteInfo.height : this._img.height) / 2;

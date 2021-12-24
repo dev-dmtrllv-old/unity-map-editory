@@ -15,7 +15,7 @@ export class Map implements Serializable<SerializedMapData>
 		const selected = this.activeLayer.textures.find(t => 
 		{
 			const { x, y } = t.position;
-			const { extent } = t.texture;
+			const { extent } = t;
 			
 			const x1 = x - extent.x;
 			const x2 = x + extent.x;

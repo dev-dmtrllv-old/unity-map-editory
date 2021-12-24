@@ -1,14 +1,14 @@
-import { action, makeAutoObservable, makeObservable, observable } from "mobx";
-import { Map } from "./Map";
-import { MapTexture } from "./MapTexture";
+import { makeObservable } from "mobx";
+import { GameObject } from "./GameObject";
+import { Layer } from "./Layer";
 import { Texture } from "./Texture";
 import { Vector2 } from "./Vector2";
 
-export class Platform extends MapTexture
+export class Platform extends GameObject
 {	
-	public constructor(map: Map, texture: Texture, position: Vector2 = Vector2.zero, layerIndex: number = 0)
+	public constructor(layer: Layer, texture: Texture, position: Vector2 = Vector2.zero, layerIndex: number = 0)
 	{
-		super(map, texture, position, layerIndex);
+		super(layer, position, layerIndex, texture);
 		makeObservable(this);
 	}
 }

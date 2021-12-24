@@ -6,7 +6,7 @@ import { DefaultShader } from "./shaders/DefaultShader";
 import { Vector2 } from "./Vector2";
 import { CanvasRenderer } from "./CanvasRenderer";
 import { action, observable } from "mobx";
-import { MapTexture } from "./MapTexture";
+import { Texture } from "./Texture";
 
 export class MapRenderer
 {
@@ -69,29 +69,32 @@ export class MapRenderer
 
 		this.map.layers.forEach(layer => 
 		{
-			layer.textures.forEach(({ position, texture, glTexture }) => 
+			layer.textures.forEach(({ position, texture }) => 
 			{
-				const { x, y } = position;
+				if (texture)
+				{
+					const { x, y } = position;
 
-				this.shader.setAttributeBuffer("aVertexPosition", texture.sizeBuffer);
-				this.shader.setAttributeBuffer("aUVPosition", texture.uvBuffer);
-				gl.activeTexture(gl.TEXTURE0);
-				gl.bindTexture(gl.TEXTURE_2D, glTexture);
-				gl.uniform1i(this.shader.getUniformLocation("uSampler"), 0);
-				gl.uniform2fv(this.shader.getUniformLocation("uPosition"), [x, y]);
+					this.shader.setAttributeBuffer("aVertexPosition", texture.sizeBuffer);
+					this.shader.setAttributeBuffer("aUVPosition", texture.uvBuffer);
+					gl.activeTexture(gl.TEXTURE0);
+					gl.bindTexture(gl.TEXTURE_2D, texture.glTexture);
+					gl.uniform1i(this.shader.getUniformLocation("uSampler"), 0);
+					gl.uniform2fv(this.shader.getUniformLocation("uPosition"), [x, y]);
 
-				gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+					gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+				}
 			});
 		});
 
-		if (this.map.selectedObject instanceof MapTexture)
+		if (this.map.selectedObject?.texture)
 		{
-			const { texture, glTexture, position } = this.map.selectedObject;
-			
+			const { texture, position } = this.map.selectedObject;
+
 			this.shader.setAttributeBuffer("aVertexPosition", texture.selectionBuffer);
 			this.shader.setAttributeBuffer("aUVPosition", texture.uvBuffer);
 			gl.activeTexture(gl.TEXTURE0);
-			gl.bindTexture(gl.TEXTURE_2D, glTexture);
+			gl.bindTexture(gl.TEXTURE_2D, texture.glTexture);
 			gl.uniform1i(this.shader.getUniformLocation("uSampler"), 0);
 			gl.uniform2fv(this.shader.getUniformLocation("uPosition"), [position.x, position.y]);
 			gl.uniform1f(this.shader.getUniformLocation("uSelectionRender"), 1);
