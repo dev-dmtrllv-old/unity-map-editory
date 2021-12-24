@@ -1,0 +1,32 @@
+@import "app/theme.scss";
+
+.check-box-wrapper {
+	display: inline-block;
+	.flex-wrapper {
+		.placeholder {
+			display: inline-block;
+		}
+		.check-box {
+			top: 8px;
+			margin: 4px 5px;
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			border: 1px solid $tertiary-bg;
+			background-color: $primary-bg;
+			border-radius: 6px;
+			cursor: pointer;
+			padding: 1px;
+			& > .view {
+				background-color: transparent;
+				transition: 150ms;
+				border-radius: 4px;
+			}
+			&.selected {
+				& > .view {
+					background-color: $active-link;
+				}
+			}
+		}
+	}
+}

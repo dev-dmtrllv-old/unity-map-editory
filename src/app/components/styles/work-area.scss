@@ -1,0 +1,46 @@
+@import "app/theme.scss";
+
+.work-area {
+	.tabs {
+		.tab {
+			display: inline-block;
+			border: 1px solid $secundary-bg;
+			border-top-left-radius: 6px;
+			border-top-right-radius: 6px;
+			border-bottom: 0px;
+			.name {
+				display: inline-block;
+				padding: 5px 12px;
+			}
+			.btn-close {
+				display: inline-block;
+				width: 12px;
+				height: 12px;
+				border-radius: 6px;
+				padding-right: 24px;
+				&::after,
+				&::before {
+					content: "";
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%) rotate(45deg);
+					width: 10px;
+					background-color: #999999;
+					height: 2px;
+					border-radius: 6deg;
+				}
+
+				&::before {
+					transform: translate(-50%, -50%) rotate(-45deg);
+				}
+			}
+			&.active {
+				background-color: $secundary-bg;
+			}
+		}
+	}
+	canvas {
+		background-color: white;
+	}
+}

@@ -1,0 +1,17 @@
+@mixin media($medias...) {
+	@each $media in $medias {
+		@if $media == "small" {
+			@media only screen and (min-width: 640px) and (max-width: 1023px) {
+				@content;
+			}
+		} @else if $media == "medium" {
+			@media only screen and (min-width: 1024px) and (max-width: 1599px) {
+				@content;
+			}
+		} @else if $media == "large" {
+			@media only screen and (min-width: 1600px) {
+				@content;
+			}
+		}
+	}
+}

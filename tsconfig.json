@@ -1,0 +1,40 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "ESNext",
+		"lib": [
+			"DOM",
+			"ES2015",
+			"ES2016"
+		],
+		"allowJs": false,
+		"jsx": "react",
+		"declaration": false,
+		"outDir": "dist",
+		"baseUrl": "src",
+		"rootDir": "src",
+		"paths": {
+			
+		},
+		"removeComments": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true
+	},
+	"exclude": [
+		"./src/main/**"
+	],
+	"include": [
+		"./src/**/*"
+	]
+}

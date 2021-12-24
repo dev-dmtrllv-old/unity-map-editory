@@ -1,0 +1,28 @@
+$black: black;
+
+$primary-fg: #a7a7a7;
+$secundary-fg: #bebebe;
+$tertiary-fg: #cfcfcf;
+
+$primary-bg: #1f1f1f;
+$secundary-bg: #333333;
+$tertiary-bg: #535353;
+
+$active-link: #ffa42c;
+$border-color: rgb(22, 22, 22);
+$active-box-shadow: rgba(255, 164, 44, 0.5);
+
+@mixin primary {
+	color: $primary-fg;
+	background-color: $primary-bg;
+}
+
+@mixin secundary {
+	color: $secundary-fg;
+	background-color: $secundary-bg;
+}
+
+@mixin tertiary {
+	color: $tertiary-fg;
+	background-color: $tertiary-bg;
+}

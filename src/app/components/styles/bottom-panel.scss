@@ -1,0 +1,35 @@
+.bottom-panel {
+	overflow-y: auto;
+	padding: 15px;
+	.texture {
+		padding: 5px;
+		margin: 5px;
+		border-radius: 6px;
+		width: 138px;
+		display: inline-block;
+		overflow: hidden;
+
+		.img {
+			width: 128px;
+			height: 128px;
+			image-rendering: pixelated;
+			background-size: contain;
+			background-position: center;
+			background-clip: border-box;
+			background-origin: border-box;
+			background-repeat: no-repeat;
+		}
+
+		&:hover, &.selected {
+			background-color: rgb(27, 27, 27);
+		}
+
+		.name {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			padding: 4px 8px;
+			text-align: center;
+		}
+	}
+}

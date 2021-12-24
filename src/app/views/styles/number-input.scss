@@ -1,0 +1,45 @@
+@import "app/theme.scss";
+
+.number-input {
+	.placeholder {
+		display: inline-block;
+		left: 15px;
+		top: 7px;
+		background-color: transparent;
+		transition: 150ms;
+		user-select: none;
+		pointer-events: none;
+		left: 4px;
+		font-size: 10px;
+		top: -6px;
+		position: absolute;
+	}
+
+	&.focus {
+		input {
+			border-color: $active-box-shadow;
+		}
+	}
+
+	input {
+		background-color: transparent;
+		border: 0px;
+		border-bottom: 1px solid $tertiary-bg;
+		font-size: 14px;
+		padding: 7px 15px;
+		color: $primary-fg;
+		outline: none;
+		width: 64px;
+		text-align: center;
+
+		&.focus {
+			border-color: $active-box-shadow;
+		}
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+}

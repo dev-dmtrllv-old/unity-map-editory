@@ -1,0 +1,257 @@
+@import "app/theme.scss";
+
+#open-map-dialog {
+	.top-bar .add-btn {
+		width: 32px;
+		right: 12px;
+		height: 32px;
+		border: 1px solid $tertiary-bg;
+		border-radius: 6px;
+		background-color: $primary-bg;
+		opacity: 0.3;
+		transition: 150ms;
+		cursor: pointer;
+		&:hover {
+			opacity: 0.6;
+		}
+
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			width: 14px;
+			height: 2px;
+			border-radius: 2px;
+			background-color: white;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%);
+		}
+
+		&::after {
+			transform: translate(-50%) rotate(90deg);
+		}
+	}
+	.side-bar {
+		box-shadow: 0px 0px 4px 1px rgb(0, 0, 0, 0.34);
+		z-index: 1;
+		.top-bar {
+			border-bottom: 1px solid $tertiary-bg;
+		}
+
+		.list {
+			.not-found {
+				text-align: center;
+				.text {
+					padding: 15px 0px;
+				}
+			}
+			.item {
+				padding: 8px 16px;
+				cursor: pointer;
+				.name {
+					padding-bottom: 4px;
+				}
+				.path {
+					font-size: 12px;
+				}
+				&::after {
+					content: "";
+					position: absolute;
+					width: 100%;
+					height: 1px;
+					left: 0px;
+					bottom: 0px;
+					background-color: $tertiary-bg;
+				}
+
+				&.selected {
+					background-color: $tertiary-bg;
+				}
+
+				&:hover {
+					background-color: #434343;
+				}
+			}
+		}
+	}
+
+	.map-list {
+		.item {
+			padding: 8px 16px;
+			border-bottom: 1px solid $secundary-bg;
+			cursor: pointer;
+			&:hover, &.selected {
+				background-color: $secundary-bg;
+			}
+
+			.name {
+				margin-bottom: 4px;
+			}
+
+			.size {
+				font-size: 12px;
+			}
+
+			.edit-btn {
+				width: 32px;
+				right: 12px;
+				height: 32px;
+				border-radius: 6px;
+				background-color: transparent;
+				opacity: 0.3;
+				transition: 150ms;
+				cursor: pointer;
+				& > .view, & > .view::after, & > .view::before {
+					position: absolute;
+					width: 5px;
+					height: 5px;
+					border-radius: 6px;
+					background-color: #aaaaaa;
+				}
+				& > .view::after
+				{
+					top: 7px;
+					content: "";
+				}
+
+				& > .view::before {
+					content: "";
+					top: -7px;
+				}
+				opacity: 0.5;
+				&:hover {
+					opacity: 1;
+					background-color: $primary-bg;
+				}
+			}
+
+			.edit-dropdown {
+				display: none;
+				position: absolute;
+				right: 8px;
+				padding: 5px 0px;
+				background-color: $primary-bg;
+				border: 1px solid $secundary-bg;
+				border-radius: 6px;
+				min-width: 120px;
+				box-shadow: 0px 0px 4px 1px rgb(0, 0, 0, 0.34);
+				z-index: 1;
+
+				.view {
+					padding: 8px 16px;
+					cursor: pointer;
+					&:hover {
+						background-color: $secundary-bg;
+					}
+				}
+			}
+
+			&.selected .edit-dropdown {
+				display: block;
+			}
+		}
+	}
+
+	.top-bar {
+		text-align: center;
+		.title {
+			bottom: 0px;
+			background: transparent;
+			display: inline-block;
+		}
+		button {
+			float: left;
+		}
+	}
+
+	.new-map-panel {
+		.form-wrapper {
+			width: 100%;
+			padding: 35px 120px;
+
+			form {
+				width: 100%;
+				.input-wrapper {
+					overflow: hidden;
+					width: 100%;
+					margin: 0px;
+					display: block;
+					input {
+						width: 100%;
+					}
+				}
+
+				.size-group {
+					text-align: center;
+					width: 100%;
+					margin: 12px 0px 32px 0px;
+					.number-input,
+					.cross {
+						display: inline-block;
+					}
+				}
+
+				.cross {
+					display: inline-block;
+					width: 46px;
+					height: 46px;
+					&::after,
+					&::before {
+						content: "";
+						position: absolute;
+						left: 50%;
+						bottom: 5px;
+						transform: translateX(-50%) rotate(-45deg);
+						background-color: $tertiary-bg;
+						height: 2px;
+						width: 50%;
+						border-radius: 6px;
+					}
+
+					&::after {
+						transform: translateX(-50%) rotate(45deg);
+					}
+				}
+			}
+		}
+		.create-map-errors {
+			margin-top: 35px;
+			.error {
+				background-color: #db3e3e81;
+				padding: 7px 14px;
+				border-radius: 8px;
+				border: 1px solid rgba(255, 255, 255, 0.336);
+				margin: 5px;
+
+				.btn-remove {
+					width: 28px;
+					height: 28px;
+					right: 2px;
+					top: 2px;
+					background-color: transparent;
+					opacity: 0.5;
+					transition: 150ms;
+					cursor: pointer;
+					&::before,
+					&::after {
+						content: "";
+						position: absolute;
+						width: 75%;
+						height: 2px;
+						background-color: $secundary-fg;
+						left: 50%;
+						top: 50%;
+						transform: translate(-50%, -50%) rotate(45deg);
+					}
+					&::after {
+						transform: translate(-50%, -50%) rotate(-45deg);
+					}
+					&:hover {
+						opacity: 1;
+					}
+				}
+			}
+		}
+	}
+}

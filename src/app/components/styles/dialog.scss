@@ -1,0 +1,80 @@
+@import "app/theme.scss";
+
+.dialog-wrapper {
+	$anim-speed: 450ms;
+	background-color: rgba(0, 0, 0, 0);
+	z-index: 1000;
+	width: 0px !important;
+	overflow: hidden;
+	transition: background-color $anim-speed, width 0ms $anim-speed;
+
+	.dialog {
+		border-radius: 6px;
+		opacity: 0;
+		transition: top $anim-speed, opacity $anim-speed;
+		top: 0%;
+		overflow: hidden;
+		box-shadow: 2px 2px 3px 0px rgb(0, 0, 0, 0.35);
+		
+		.top-bar {
+			padding: 15px 35px;
+			border-bottom: 1px solid $secundary-bg;
+
+			.title {
+				position: absolute;
+				bottom: 15px;
+				font-size: 26px;
+			}
+
+			.close-btn {
+				width: 24px;
+				height: 24px;
+				border: 1px solid $tertiary-bg;
+				border-radius: 6px;
+				right: 0;
+				top: 0;
+				margin: 8px;
+				opacity: 0.35;
+				transition: 350ms;
+				cursor: pointer;
+				.cross {
+					width: 12px;
+					height: 2px;
+					&::before {
+						content: "";
+						position: absolute;
+						width: 12px;
+						height: 2px;
+						background-color: $tertiary-bg;
+						transform: rotate(-45deg);
+					}
+					&::after {
+						content: "";
+						position: absolute;
+						width: 12px;
+						height: 2px;
+						background-color: $tertiary-bg;
+						transform: rotate(45deg);
+					}
+				}
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
+
+		.body {
+			overflow: hidden;
+		}
+	}
+
+	&.open {
+		width: 100% !important;
+		transition: background-color $anim-speed, width 0ms 0ms;
+		background-color: rgba(0, 0, 0, 0.6);
+		.dialog {
+			opacity: 1;
+			top: 50%;
+		}
+	}
+}
