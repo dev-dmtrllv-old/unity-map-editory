@@ -101,6 +101,12 @@ export class DialogStore extends InitializableStore<InitDialogProps>
 			return;
 
 		this.setOpen(false);
+
+		if(this._dialogStore)
+		{
+			this._dialogStore.onClose();
+			this._dialogStore = null;
+		}
 	}
 
 	@action
