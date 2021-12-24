@@ -77,7 +77,6 @@ export class Editor
 		this._activeMap = this._openMaps[0];
 		window.addEventListener("mousemove", this.onMouseMove);
 		window.addEventListener("mouseup", this.onMouseUp);
-		window.addEventListener("wheel", this.onMouseWheel);
 		makeAutoObservable(this);
 	}
 
@@ -186,10 +185,7 @@ export class Editor
 			this._mouseDownButton = e.button as any;
 			this._startPos = Vector2.clone(pos);
 			if (e.button === 0 && map.selectedObject)
-			{
 				this._startOffset = Vector2.add(Vector2.sub(map.selectedObject.position, pos), map.offset);
-				console.log(pos.serialize());
-			}
 			else if (e.button === 1)
 				this._startOffset = map.offset;
 		}
@@ -272,7 +268,7 @@ export class Editor
 		}, 120);
 	}
 
-	public readonly onMouseWheel = (e: WheelEvent) => 
+	public readonly onMouseWheel = (e: React.WheelEvent) => 
 	{
 		if(this._mouseDownPos)
 			return;
